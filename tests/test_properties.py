@@ -33,7 +33,7 @@ async def test_redis_backend_roundtrip(key: str, value: bytes) -> None:
 
     assert result == value
 
-    await redis.aclose()
+    await redis.aclose()  # type: ignore[attr-defined]
 
 
 # Feature: redis5-prefect-compatibility, Property 2: TTL consistency after set
@@ -59,7 +59,7 @@ async def test_ttl_consistency_after_set(
     assert returned_ttl <= ttl
     assert returned_value == value
 
-    await redis.aclose()
+    await redis.aclose()  # type: ignore[attr-defined]
 
 
 # Feature: redis5-prefect-compatibility, Property 4: JsonCoder datetime round-trip
@@ -155,7 +155,7 @@ async def test_clear_namespace_isolation(
         result = await backend.get(key)
         assert result == other_value, f"Expected {key} to still have its value"
 
-    await redis.aclose()
+    await redis.aclose()  # type: ignore[attr-defined]
 
 
 # Feature: redis5-prefect-compatibility, Property 5: Clear with no arguments is a no-op
@@ -206,4 +206,4 @@ async def test_clear_no_args_is_noop(
             f"Expected key '{key}' to still have value {value!r}, got {stored!r}"
         )
 
-    await redis.aclose()
+    await redis.aclose()  # type: ignore[attr-defined]
