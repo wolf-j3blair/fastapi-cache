@@ -1,24 +1,28 @@
 up:
-	@poetry update
+	@uv lock --upgrade
 
 deps:
-	@poetry install --no-root --with=linting --all-extras
+	@uv sync --all-extras --group linting
 
 format: deps
-	@poetry run tox run -e format
+	@uv run ruff check --fix .
 
 lint: deps
-	@poetry run tox run -e lint
+	@uv run ruff check .
+	@uv run ty check
 
 test: deps
-	@poetry run tox
+	@uv run pytest
 
 test-parallel: deps
-	@poetry run tox run-parallel
+	@uv run --python 3.10 pytest
+	@uv run --python 3.11 pytest
+	@uv run --python 3.12 pytest
+	@uv run --python 3.13 pytest
+	@uv run --python 3.14 pytest
 
 build: clean deps
-	@poetry build
-	@poetry run tox run -e lint_distributions
+	@uv build
 
 clean:
 	@rm -rf ./dist

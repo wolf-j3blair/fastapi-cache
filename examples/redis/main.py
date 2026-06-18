@@ -65,7 +65,7 @@ async def get_data(request: Request, response: Response):
 # Note: This function MUST be sync to demonstrate fastapi-cache's correct handling,
 # i.e. running cached sync functions in threadpool just like FastAPI itself!
 @app.get("/blocking")
-@cache(namespace="test", expire=10) # pyright: ignore[reportArgumentType]
+@cache(namespace="test", expire=10)  # pyright: ignore[reportArgumentType]
 def blocking():
     time.sleep(2)
     return {"ret": 42}
@@ -81,7 +81,9 @@ async def get_datetime(request: Request, response: Response):
 @app.get("/html", response_class=HTMLResponse)
 @cache(expire=60, namespace="html", coder=PickleCoder)
 async def cache_html(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "ret": await get_ret()})
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "ret": await get_ret()}
+    )
 
 
 @app.get("/cache_response_obj")

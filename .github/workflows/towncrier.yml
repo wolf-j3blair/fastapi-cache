@@ -27,16 +27,17 @@ jobs:
       )
     steps:
     - uses: actions/checkout@v2
-    - name: Install Poetry
-      run: pipx install poetry
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
     - name: Setup Python
       id: setup-python
       uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-        cache: poetry
     - name: Install development tools
-      run: poetry install --no-root --only=dev
+      run: uv sync --no-install-project --group dev
     - name: Check for a towncrier fragment
       run: |
         # fetch enough commits from this merge commit to the base sha to ensure
@@ -44,7 +45,7 @@ jobs:
         while [[ -z $(git merge-base $PR_BASE_SHA HEAD 2> /dev/null) ]]; do
           git fetch --quiet --deepen=50 --no-tags --no-recurse-submodules origin $PR_BASE_SHA HEAD
         done
-        if poetry run towncrier check --compare-with $PR_BASE_SHA; then
+        if uv run towncrier check --compare-with $PR_BASE_SHA; then
           gh pr edit "$PR_URL" --add-label "changelog-provided"
         else
           gh pr edit "$PR_URL" --remove-label "changelog-provided"

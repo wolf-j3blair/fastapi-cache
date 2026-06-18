@@ -21,6 +21,7 @@ from starlette.templating import (
 class ModelField:
     pass
 
+
 _T = TypeVar("_T", bound=type)
 
 
@@ -73,13 +74,11 @@ class Coder:
 
     @overload
     @classmethod
-    def decode_as_type(cls, value: bytes, *, type_: _T) -> _T:
-        ...
+    def decode_as_type(cls, value: bytes, *, type_: _T) -> _T: ...
 
     @overload
     @classmethod
-    def decode_as_type(cls, value: bytes, *, type_: None) -> Any:
-        ...
+    def decode_as_type(cls, value: bytes, *, type_: None) -> Any: ...
 
     @classmethod
     def decode_as_type(cls, value: bytes, *, type_: _T | None) -> _T | Any:

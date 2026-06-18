@@ -42,11 +42,15 @@ class InMemoryBackend(Backend):
                 return v.data
             return None
 
-    async def set(self, key: str, value: bytes, expire: int | None = None) -> None:
+    async def set(
+        self, key: str, value: bytes, expire: int | None = None
+    ) -> None:
         async with self._lock:
             self._store[key] = Value(value, self._now + (expire or 0))
 
-    async def clear(self, namespace: str | None = None, key: str | None = None) -> int:
+    async def clear(
+        self, namespace: str | None = None, key: str | None = None
+    ) -> int:
         count = 0
         if namespace:
             keys = list(self._store.keys())

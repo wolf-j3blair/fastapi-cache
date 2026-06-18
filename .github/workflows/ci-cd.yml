@@ -18,26 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry
-      - name: Setup Python
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.12'
-          cache: poetry
-      - name: Cache mypy cache
-        uses: actions/cache@v4
-        with:
-          path: .mypy_cache
-          key: ${{ runner.os }}-mypy-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mypy-${{ steps.setup-python.outputs.python-version }}-
-            ${{ runner.os }}-mypy-
-      - name: Install linting requirements
-        run: poetry install --no-root
+          enable-cache: true
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --all-extras --group linting
       - name: Execute linters
-        run: make lint
+        run: |
+          uv run ruff check .
+          uv run ty check
 
   test:
     needs:
@@ -52,18 +43,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
           python-version: "${{ matrix.python }}"
-          cache: poetry
-      - name: Install testing requirements
-        run: |
-          poetry install --no-root
-          poetry run pip install tox-gh-actions
+      - name: Install dependencies
+        run: uv sync --all-extras
       - name: Execute tests
-        run: poetry run tox
+        run: uv run pytest
 
   test-summary:
     name: Test matrix status
@@ -83,16 +71,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.12'
-          cache: poetry
+          enable-cache: true
+          python-version: "3.12"
       - name: Build distributions
-        run:
-          make build
+        run: uv build
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

@@ -36,7 +36,9 @@ def _augment_signature(signature: Signature, *extra: Parameter) -> Signature:
     while parameters and parameters[-1].kind is Parameter.VAR_KEYWORD:
         variadic_keyword_params.append(parameters.pop())
 
-    return signature.replace(parameters=[*parameters, *extra, *variadic_keyword_params])
+    return signature.replace(
+        parameters=[*parameters, *extra, *variadic_keyword_params]
+    )
 
 
 def _locate_param(
@@ -48,7 +50,8 @@ def _locate_param(
 
     """
     param = next(
-        (p for p in sig.parameters.values() if p.annotation is dep.annotation), None
+        (p for p in sig.parameters.values() if p.annotation is dep.annotation),
+        None,
     )
     if param is None:
         to_inject.append(dep)
@@ -80,7 +83,9 @@ def cache(
     key_builder: KeyBuilder | None = None,
     namespace: str = "",
     injected_dependency_namespace: str = "__fastapi_cache",
-) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R | Response]]]:
+) -> Callable[
+    [Callable[P, Awaitable[R]]], Callable[P, Awaitable[R | Response]]
+]:
     """
     cache all function
     :param injected_dependency_namespace:
@@ -104,13 +109,17 @@ def cache(
     )
 
     def wrapper(
-        func: Callable[P, Awaitable[R]]
+        func: Callable[P, Awaitable[R]],
     ) -> Callable[P, Awaitable[R | Response]]:
         # get_typed_signature ensures that any forward references are resolved first
         wrapped_signature = get_typed_signature(func)
         to_inject: list[Parameter] = []
-        request_param = _locate_param(wrapped_signature, injected_request, to_inject)
-        response_param = _locate_param(wrapped_signature, injected_response, to_inject)
+        request_param = _locate_param(
+            wrapped_signature, injected_request, to_inject
+        )
+        response_param = _locate_param(
+            wrapped_signature, injected_response, to_inject
+        )
         return_type = get_typed_return_annotation(func)
 
         @wraps(func)
@@ -140,7 +149,9 @@ def cache(
 
             copy_kwargs = kwargs.copy()
             request: Request | None = copy_kwargs.pop(request_param.name, None)  # type: ignore[assignment]
-            response: Response | None = copy_kwargs.pop(response_param.name, None)  # type: ignore[assignment]
+            response: Response | None = copy_kwargs.pop(
+                response_param.name, None
+            )  # type: ignore[assignment]
 
             if _uncacheable(request):
                 return await ensure_async_func(*args, **kwargs)
@@ -173,7 +184,10 @@ def cache(
                 )
                 ttl, cached = 0, None
 
-            if cached is None  or (request is not None and request.headers.get("Cache-Control") == "no-cache") :  # cache miss
+            if cached is None or (
+                request is not None
+                and request.headers.get("Cache-Control") == "no-cache"
+            ):  # cache miss
                 result = await ensure_async_func(*args, **kwargs)
                 to_cache = coder.encode(result)
 
@@ -205,12 +219,16 @@ def cache(
                         }
                     )
 
-                    if_none_match = request and request.headers.get("if-none-match")
+                    if_none_match = request and request.headers.get(
+                        "if-none-match"
+                    )
                     if if_none_match == etag:
                         response.status_code = HTTP_304_NOT_MODIFIED
                         return response
 
-                result = cast(R, coder.decode_as_type(cached, type_=return_type))
+                result = cast(
+                    R, coder.decode_as_type(cached, type_=return_type)
+                )
 
             return result
 

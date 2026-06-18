@@ -18,10 +18,14 @@ class RedisBackend(Backend):
     async def get(self, key: str) -> bytes | None:
         return await self.redis.get(key)  # type: ignore[union-attr]
 
-    async def set(self, key: str, value: bytes, expire: int | None = None) -> None:
+    async def set(
+        self, key: str, value: bytes, expire: int | None = None
+    ) -> None:
         await self.redis.set(key, value, ex=expire)  # type: ignore[union-attr]
 
-    async def clear(self, namespace: str | None = None, key: str | None = None) -> int:
+    async def clear(
+        self, namespace: str | None = None, key: str | None = None
+    ) -> int:
         if namespace:
             lua = f"for i, name in ipairs(redis.call('KEYS', '{namespace}:*')) do redis.call('DEL', name); end"
             return await self.redis.eval(lua, numkeys=0)  # type: ignore[union-attr,no-any-return]

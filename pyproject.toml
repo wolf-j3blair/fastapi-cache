@@ -1,84 +1,62 @@
-[tool.poetry]
+[project]
 name = "fastapi-cache2"
 version = "0.2.3"
 description = "Cache for FastAPI"
-authors = ["long2ice <long2ice@gmail.com>"]
-license = "Apache-2.0"
+authors = [{ name = "long2ice", email = "long2ice@gmail.com" }]
+license = { text = "Apache-2.0" }
 readme = "README.md"
-homepage = "https://github.com/long2ice/fastapi-cache"
-repository = "https://github.com/long2ice/fastapi-cache.git"
-documentation = "https://github.com/long2ice/fastapi-cache"
 keywords = ["fastapi", "cache", "caching"]
-packages = [{ include = "fastapi_cache" }]
-include = ["LICENSE", "README.md"]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.100.0,<1.0.0",
+    "uvicorn",
+    "typing-extensions>=4.10.0,<5.0.0",
+    "pendulum>=3.0.0,<4.0.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-fastapi = ">=0.100.0,<1.0.0"
-uvicorn = "*"
-typing-extensions = { version = ">=4.10.0,<5.0.0" }
-pendulum = "^3.0.0"
-aiomcache = { version = "^0.8.2", optional = true }
-aiobotocore = { version = "^2.13.1", optional = true }
-redis = { version = ">=5.0.8,<7.0.0", optional = true }
+[project.urls]
+Homepage = "https://github.com/long2ice/fastapi-cache"
+Repository = "https://github.com/long2ice/fastapi-cache.git"
+Documentation = "https://github.com/long2ice/fastapi-cache"
 
-[tool.poetry.group.linting]
-optional = true
+[project.optional-dependencies]
+redis = ["redis>=5.0.8,<7.0.0"]
+memcache = ["aiomcache>=0.8.2,<0.9.0"]
+dynamodb = ["aiobotocore>=2.13.1,<3.0.0"]
+all = [
+    "redis>=5.0.8,<7.0.0",
+    "aiomcache>=0.8.2,<0.9.0",
+    "aiobotocore>=2.13.1,<3.0.0",
+]
 
-[tool.poetry.group.linting.dependencies]
-mypy = { version = ">=1.5.0", python = "^3.10" }
-pyright = { version = ">=1.1.373,<1.1.400", python = "^3.10" }
-types-aiobotocore = { extras = [
-    "dynamodb",
-], version = "^2.5.0.post2", python = "^3.10" }
-types-redis = { version = "^4.5.4.2", python = "^3.10" }
-ruff = { version = ">=0.4.0", python = "^3.10" }
+[dependency-groups]
+dev = [
+    "pytest",
+    "requests",
+    "coverage>=7.0,<9.0",
+    "httpx",
+    "towncrier>=24.8.0",
+    "hypothesis>=6.0",
+    "fakeredis[lua]>=2.0",
+    "pytest-asyncio>=0.23.0",
+    "jinja2",
+]
+linting = ["ruff>=0.4.0", "ty"]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "*"
-requests = "*"
-coverage = ">=7.0,<9.0"
-httpx = "*"
-tox = ">=4.5.1"
-towncrier = ">=24.8.0"
-hypothesis = ">=6.0"
-fakeredis = { version = ">=2.0", extras = ["lua"] }
-pytest-asyncio = ">=0.23.0"
 
-[tool.poetry.group.distributing]
-optional = true
+[tool.ty.src]
+include = ["fastapi_cache/"]
+exclude = ["examples/"]
 
-[tool.poetry.group.distributing.dependencies]
-twine = { version = "^6.1.0", python = "^3.10" }
+[tool.ty.environment]
+python-version = "3.10"
 
-[tool.poetry.extras]
-redis = ["redis"]
-memcache = ["aiomcache"]
-dynamodb = ["aiobotocore"]
-all = ["redis", "aiomcache", "aiobotocore"]
-
-[tool.mypy]
-files = ["."]
-python_version = "3.10"
-# equivalent of --strict
-warn_unused_configs = true
-disallow_any_generics = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-no_implicit_reexport = true
-strict_equality = true
-extra_checks = true
-
-[[tool.mypy.overrides]]
-module = "examples.*.main"
-ignore_errors = true
+[tool.ty.rules]
+all = "error"
+missing-override-decorator = "warn"
+unresolved-import = "warn"
+unresolved-attribute = "warn"
+invalid-return-type = "warn"
 
 [tool.towncrier]
 directory = "changelog.d"
@@ -90,10 +68,6 @@ template = "changelog.d/changelog_template.jinja"
 title_format = "## [{version}](https://github.com/long2ice/fastapi-cache/tree/{version}) - {project_date}"
 issue_format = "[#{issue}](https://github.com/long2ice/fastapi-cache/issues/{issue})"
 
-[tool.pyright]
-strict = ["fastapi_cache"]
-pythonVersion = "3.10"
-exclude = ["examples"]
 
 [tool.pytest.ini_options]
 addopts = "-p no:warnings"
@@ -106,6 +80,10 @@ target-version = "py310"
 select = ["B", "C4", "E", "F", "I", "S", "W", "UP"]
 ignore = ["E501"]
 
+[tool.uv.build-backend]
+module-root = ""
+module-name = "fastapi_cache"
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.11.21,<0.12"]
+build-backend = "uv_build"

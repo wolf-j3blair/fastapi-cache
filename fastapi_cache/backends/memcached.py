@@ -1,4 +1,3 @@
-
 from aiomcache import Client
 
 from fastapi_cache.types import Backend
@@ -14,8 +13,12 @@ class MemcachedBackend(Backend):
     async def get(self, key: str) -> bytes | None:
         return await self.mcache.get(key.encode())
 
-    async def set(self, key: str, value: bytes, expire: int | None = None) -> None:
+    async def set(
+        self, key: str, value: bytes, expire: int | None = None
+    ) -> None:
         await self.mcache.set(key.encode(), value, exptime=expire or 0)
 
-    async def clear(self, namespace: str | None = None, key: str | None = None) -> int:
+    async def clear(
+        self, namespace: str | None = None, key: str | None = None
+    ) -> int:
         raise NotImplementedError

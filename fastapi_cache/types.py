@@ -19,8 +19,7 @@ class KeyBuilder(Protocol):
         response: Response | None = ...,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
-    ) -> Awaitable[str] | str:
-        ...
+    ) -> Awaitable[str] | str: ...
 
 
 class Backend(abc.ABC):
@@ -33,9 +32,13 @@ class Backend(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def set(self, key: str, value: bytes, expire: int | None = None) -> None:
+    async def set(
+        self, key: str, value: bytes, expire: int | None = None
+    ) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def clear(self, namespace: str | None = None, key: str | None = None) -> int:
+    async def clear(
+        self, namespace: str | None = None, key: str | None = None
+    ) -> int:
         raise NotImplementedError
