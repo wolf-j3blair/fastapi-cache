@@ -6,11 +6,10 @@ async Redis implementation.
 
 import datetime
 
+import fakeredis
 import pytest
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
-
-import fakeredis
 
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.coder import JsonCoder
@@ -191,7 +190,7 @@ async def test_clear_no_args_is_noop(
     backend = RedisBackend(redis)
 
     # Store key-value pairs
-    for key, value in zip(keys, values):
+    for key, value in zip(keys, values, strict=False):
         await backend.set(key, value)
 
     # Call clear with no arguments (defaults to namespace=None, key=None)
@@ -201,7 +200,7 @@ async def test_clear_no_args_is_noop(
     assert result == 0
 
     # All pre-existing keys should still be accessible with their original values
-    for key, value in zip(keys, values):
+    for key, value in zip(keys, values, strict=False):
         stored = await backend.get(key)
         assert stored == value, (
             f"Expected key '{key}' to still have value {value!r}, got {stored!r}"
