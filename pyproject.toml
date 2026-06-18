@@ -27,7 +27,7 @@ optional = true
 
 [tool.poetry.group.linting.dependencies]
 mypy = { version = ">=1.5.0", python = "^3.10" }
-pyright = { version = "^1.1.373", python = "^3.10" }
+pyright = { version = ">=1.1.373,<1.1.400", python = "^3.10" }
 types-aiobotocore = { extras = [
     "dynamodb",
 ], version = "^2.5.0.post2", python = "^3.10" }
