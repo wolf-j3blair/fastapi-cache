@@ -91,8 +91,9 @@ title_format = "## [{version}](https://github.com/long2ice/fastapi-cache/tree/{v
 issue_format = "[#{issue}](https://github.com/long2ice/fastapi-cache/issues/{issue})"
 
 [tool.pyright]
-strict = ["fastapi_cache", "tests"]
+strict = ["fastapi_cache"]
 pythonVersion = "3.10"
+exclude = ["examples"]
 
 [tool.pytest.ini_options]
 addopts = "-p no:warnings"
