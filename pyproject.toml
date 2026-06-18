@@ -40,7 +40,7 @@ requests = "*"
 coverage = ">=7.0,<9.0"
 httpx = "*"
 tox = ">=4.5.1"
-towncrier = "^22.12.0"
+towncrier = ">=24.8.0"
 hypothesis = ">=6.0"
 fakeredis = { version = ">=2.0", extras = ["lua"] }
 pytest-asyncio = ">=0.23.0"
