@@ -8,6 +8,13 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [0.2.3](https://github.com/long2ice/fastapi-cache/tree/0.2.3) - 2026-06-18
+
+### Features
+
+- Use `importlib.metadata` to include project version string as `fastapi_cache.__version__`. [#172](https://github.com/long2ice/fastapi-cache/issues/172)
+- Modernize dependency stack for redis-py 5.x/6.x and Prefect 3.x compatibility. Drop Python 3.8/3.9 support, require Python >=3.10. [#173](https://github.com/long2ice/fastapi-cache/issues/173)
+
 ## 0.2
 
 ### 0.2.1
